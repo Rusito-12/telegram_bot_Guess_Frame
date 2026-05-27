@@ -1,33 +1,26 @@
 package command;
 
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.generics.TelegramClient;
+import telegram.TelegramService;
 
 public class StartCommand implements Command {
 
-    private final String startText = """
-            U+1F44B Привет! Я Guess Frame.
-            Я показываю кадры, а ты угадываешь, из како-го они фильма.
-            """; // Фильмы, сериалы и мультфильмы - все вперемешку.
+    private final TelegramService telegramService;
 
-    private TelegramClient telegramClient;
-
-    public StartCommand(TelegramClient telegramClient) {
-        this.telegramClient = telegramClient;
+    public StartCommand(TelegramService telegramService) {
+        this.telegramService = telegramService;
     }
+
     @Override
     public void execute(Update update) {
-        SendMessage message = SendMessage.builder()
-                .chatId(update.getMessage().getChatId())
-                .text(startText)
-                .build();
+        String startText = """
+                👋 Привет! Я Guess Frame.
+                Я показываю кадры, а ты угадываешь, из како-го они фильма.
+                Для этого используйте команду /newgame
+                """;
 
-        try{
-            telegramClient.execute(message);
-        }catch (TelegramApiException e){
-            System.out.println("Не удалось отправить сообщение в ответ на команду /start");
-        }
+        String chatId = update.getMessage().getChatId().toString();
+
+        telegramService.sendMessage(chatId, startText);
     }
 }
