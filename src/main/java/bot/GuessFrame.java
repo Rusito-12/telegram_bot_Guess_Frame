@@ -1,15 +1,20 @@
 package bot;
 
 import command.CommandDispatcher;
-import game.*;
+import game.GameService;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.objects.Update;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class GuessFrame implements LongPollingSingleThreadUpdateConsumer {
 
     private final CommandDispatcher dispatcher;
     private final GameService gameService;
+    private static final Logger LOG = LoggerFactory.getLogger(GuessFrame.class);
 
     public GuessFrame(CommandDispatcher dispatcher, GameService gameService) {
 
