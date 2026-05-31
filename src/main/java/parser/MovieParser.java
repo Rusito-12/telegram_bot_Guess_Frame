@@ -12,7 +12,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class MovieParser {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MovieParser.class);
 
     private static final int MOVIE_TITLE_INDEX = 0;
     private static final int MOVIE_IMAGE_PATH_INDEX = 1;
@@ -21,6 +26,7 @@ public class MovieParser {
         InputStream inputStream = getClass().getResourceAsStream(csvFilePath);
 
         if (inputStream == null){
+            LOG.error("CSV файл не найден в ресурсах: {}", csvFilePath);
             throw new  RuntimeException("Не получилось прочитать файл %s".formatted(csvFilePath));
         }
 
@@ -40,8 +46,9 @@ public class MovieParser {
                 Movie movie = new Movie(title, imagePath);
                 movies.add(movie);
             }
+            LOG.info("Успешно загружено {} фильмов из {}", movies.size(), csvFilePath);
         }catch (IOException e){
-            e.printStackTrace();
+            LOG.error("Ошибка при чтении CSV файла: {}", csvFilePath, e);
         }
 
         return movies;

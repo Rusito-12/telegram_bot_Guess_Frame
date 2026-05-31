@@ -6,6 +6,8 @@ import config.ConfigReaderEnvironment;
 import game.GameManager;
 import game.GameService;
 import game.Movie;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
@@ -15,12 +17,14 @@ import telegram.TelegramService;
 import java.util.List;
 
 public class Main {
+    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) {
+
         ConfigReader configReader = new ConfigReaderEnvironment();
         Config config = configReader.read();
 
         List<Movie> movies = new MovieParser().parseMovie("/movies.csv");
-        System.out.println(movies);
 
         TelegramClient telegramClient = new OkHttpTelegramClient(config.botApiToken());
         GameManager gameManager = new GameManager();
@@ -36,10 +40,10 @@ public class Main {
             botsLongApplication.registerBot(config.botApiToken(),
                    frame);
 
-            System.out.println("Бот запущен!");
+            LOG.info("Бот запущен!");
             Thread.currentThread().join();
         }catch (Exception e){
-            e.printStackTrace();
+            LOG.error("Ошибка запуска бота", e);
         }
     }
 }

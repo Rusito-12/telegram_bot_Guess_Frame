@@ -2,7 +2,6 @@ package bot;
 
 import command.CommandDispatcher;
 import game.GameService;
-import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -25,17 +24,22 @@ public class GuessFrame implements LongPollingSingleThreadUpdateConsumer {
     @Override
     public void consume(Update update) {
         if (!update.hasMessage() || !update.getMessage().hasText()) {
-            System.out.println("В сообщении пользователя нет текста!");
+            LOG.warn("Получено сообщение без текста!");
             return;
         }
 
         String text = update.getMessage().getText();
         String chatId = update.getMessage().getChatId().toString();
+        Long userId = update.getMessage().getFrom().getId();
+
+        LOG.info("Сообщение от userId={} в chatId={}: {}", userId, chatId, text);
 
         if (text.startsWith("/")) {
+            LOG.info("Передаём команду в dispatcher: {} (userId={})", text, userId);
             dispatcher.dispatch(text, update);
             return;
         }else {
+            LOG.info("Игрок {} отправил ответ: {}", userId, text);
             gameService.handleUserGuess(chatId, text);
         }
     }
