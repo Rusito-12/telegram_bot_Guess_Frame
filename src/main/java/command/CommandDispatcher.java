@@ -9,7 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class CommandDispatcher {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CommandDispatcher.class);
 
     private final Map<String, Command> commands = new HashMap<>();
 
@@ -23,12 +28,15 @@ public class CommandDispatcher {
 
         Command command = commands.get(commandKey);
 
-        System.out.printf("Обработка команды %s%n", commandKey);
+        Long userId = update.getMessage().getFrom().getId();
+
+        LOG.info("Получена команда: {} от пользоветеля {}", commandKey,  userId);
 
         if (command != null) {
+            LOG.info("Команда выполнена: {} для пользователя {}", commandKey, userId);
             command.execute(update);
         } else {
-            System.out.printf("Команда %s не найдена%n", commandKey);
+            LOG.warn("Неизвестная команда: {} от пользователя {}", commandKey, userId);
         }
     }
 

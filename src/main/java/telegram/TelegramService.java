@@ -1,6 +1,8 @@
 package telegram;
 
 import game.GameSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
@@ -15,6 +17,8 @@ public class TelegramService {
 
     public static final int ANSWER_COLUMNS_COUNT = 2;
     private final TelegramClient telegramClient;
+
+    private static final Logger LOG = LoggerFactory.getLogger(TelegramService.class);
 
     public TelegramService(TelegramClient telegramClient) {
         this.telegramClient = telegramClient;
@@ -36,7 +40,7 @@ public class TelegramService {
         try{
             telegramClient.execute(message);
         }catch (TelegramApiException e){
-            e.printStackTrace();
+            LOG.error("Ошибка отправки сообщения chatId={}", chatId, e);
         }
 
     }
@@ -45,7 +49,7 @@ public class TelegramService {
         try(InputStream inputStream = getClass().getResourceAsStream(imagePath)){
 
             if (inputStream == null) {
-                System.out.printf("Изображение %s не найдено%n", imagePath);
+                LOG.error("Не найдено изображение: {}", imagePath);
                 return;
             }
 
